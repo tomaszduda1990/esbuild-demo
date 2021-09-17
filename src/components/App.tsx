@@ -9,7 +9,7 @@ const App = () => {
 	const [outputCode, setOutputCode] = useState<any>('');
 	const initializeEsbuild = async () => {
 		await esbuild.initialize({
-			wasmURL: '/esbuild.wasm',
+			wasmURL: 'https://unpkg.com/esbuild-wasm/esbuild.wasm',
 		});
 	};
 	const transformCode = async (code: string) => {
