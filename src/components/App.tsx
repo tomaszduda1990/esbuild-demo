@@ -1,7 +1,9 @@
 import * as esbuild from 'esbuild-wasm';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Button, TextField } from '@material-ui/core';
 import './App.css';
+import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
+import { fetchPlugin } from '../plugins/fetch-plugin';
 const App = () => {
 	const [code, setCode] = useState('');
 	const [outputCode, setOutputCode] = useState<any>('');
@@ -11,11 +13,18 @@ const App = () => {
 		});
 	};
 	const transformCode = async (code: string) => {
-		const transformed = await esbuild.transform(code, {
-			loader: 'jsx',
-			target: 'es2015',
+		const transformed = await esbuild.build({
+			entryPoints: ['index.js'],
+			bundle: true,
+			write: false,
+			define: {
+				'process.env.NODE_ENV': '"production"',
+				global: 'window',
+			},
+			plugins: [unpkgPathPlugin(), fetchPlugin(code)],
 		});
-		setOutputCode(transformed.code);
+		console.log(transformed);
+		setOutputCode(transformed.outputFiles[0].text);
 	};
 	useEffect(() => {
 		initializeEsbuild();
