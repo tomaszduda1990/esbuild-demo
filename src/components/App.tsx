@@ -1,10 +1,11 @@
 import * as esbuild from 'esbuild-wasm';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Button, TextField } from '@material-ui/core';
 import './App.css';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
 const App = () => {
+	const iframeRef = useRef<any>();
 	const [code, setCode] = useState('');
 	const [outputCode, setOutputCode] = useState<any>('');
 	const initializeEsbuild = async () => {
@@ -23,8 +24,11 @@ const App = () => {
 			},
 			plugins: [unpkgPathPlugin(), fetchPlugin(code)],
 		});
-		console.log(transformed);
 		setOutputCode(transformed.outputFiles[0].text);
+		iframeRef.current.contentWindow.postMessage(
+			transformed.outputFiles[0].text,
+			'*'
+		);
 	};
 	useEffect(() => {
 		initializeEsbuild();
@@ -35,11 +39,34 @@ const App = () => {
 	};
 	const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		iframeRef.current.srcdoc = html;
 		if (!code) return;
 
 		transformCode(code);
 		setCode('');
 	};
+	const html = `
+		<html>
+			<head></head>
+			<body>
+				<div id="root"></div>
+				<script>
+					window.addEventListener('message', (e) => {
+						try{
+							eval(e.data)
+						}catch(error) {
+							const errorMessage = document.createElement('p');
+							errorMessage.textContent = error.message;
+							errorMessage.style.color = "red";
+							document.body.appendChild(errorMessage)
+							console.error(error)
+							throw error;
+						}
+					}, false)
+				</script>
+			</body>
+		</html>
+	`;
 	return (
 		<Container className='App'>
 			<header>
@@ -50,7 +77,8 @@ const App = () => {
 					id='outlined-multiline-static'
 					label='Multiline'
 					multiline
-					rows={4}
+					minRows={10}
+					style={{ minWidth: '300px' }}
 					variant='outlined'
 					value={code}
 					onChange={onChangeHandler}
@@ -59,8 +87,19 @@ const App = () => {
 					Submit
 				</Button>
 			</form>
+
 			<div className='code-output'>
-				<pre>{outputCode ? outputCode : 'No code output...'}</pre>
+				<pre>{!outputCode ? 'No code output...' : outputCode}</pre>
+				<iframe
+					style={{
+						width: outputCode ? '100%' : '0',
+						display: outputCode ? 'block' : 'none',
+					}}
+					ref={iframeRef}
+					title='sandbox'
+					srcDoc={html}
+					sandbox='allow-scripts'
+				/>
 			</div>
 		</Container>
 	);
