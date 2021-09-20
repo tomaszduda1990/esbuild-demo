@@ -1,6 +1,7 @@
 import * as esbuild from 'esbuild-wasm';
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Button, TextField } from '@material-ui/core';
+import CodeEditor from './CodeEditor';
 import './App.css';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
@@ -73,12 +74,13 @@ const App = () => {
 				<h1>Display your code</h1>
 			</header>
 			<form onSubmit={onSubmitHandler}>
+				<CodeEditor onCodeChange={(value: string) => setCode(value)} initialValue="const a = 1;" />
 				<TextField
 					id='outlined-multiline-static'
 					label='Multiline'
 					multiline
 					minRows={10}
-					style={{ minWidth: '300px' }}
+					style={{ minWidth: '200px' }}
 					variant='outlined'
 					value={code}
 					onChange={onChangeHandler}
@@ -87,7 +89,7 @@ const App = () => {
 					Submit
 				</Button>
 			</form>
-
+			
 			<div className='code-output'>
 				<pre>{!outputCode ? 'No code output...' : outputCode}</pre>
 				<iframe
