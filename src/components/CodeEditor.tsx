@@ -2,6 +2,7 @@ import React, {useRef} from 'react'
 import MonacoEditor, { OnChange, OnMount } from "@monaco-editor/react";
 import prettier from 'prettier';
 import parser from 'prettier/parser-babel'
+import styles from './CodeEditor.module.css'
 interface Props {
     initialValue: string;
     onCodeChange(code: string): void;
@@ -33,12 +34,12 @@ const CodeEditor: React.FC<Props> = ({initialValue, onCodeChange}) => {
             useTabs: true,
             semi: true,
             singleQuote: true
-        })
+        }).replace(/\n$/, "");
         editorRef.current.setValue(formatted);
     }
     return (
-      <> 
-        <button onClick={prettifyCode}>Prettify code</button>
+      <div className={styles.CodeEditorContainer}> 
+        <button className={styles.PrettifyButton} onClick={prettifyCode}>Prettify code</button>
           <MonacoEditor 
           onChange={handleEditorChange} 
           onMount={handleEditorDidMount}
@@ -58,7 +59,7 @@ const CodeEditor: React.FC<Props> = ({initialValue, onCodeChange}) => {
         }}>
             
         </MonacoEditor>
-      </>
+      </div>
     )
 }
 
