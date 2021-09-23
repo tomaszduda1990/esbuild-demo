@@ -1,43 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button } from '@material-ui/core';
 import CodeEditor from './CodeEditor';
-import Preview from './Preview'
-import * as utils from '../utils'
+import Preview from './Preview';
+import Resizable from './Resizable';
+import * as utils from '../utils';
 import './CodeCell.css';
 
 const CodeCell = () => {
 	const [code, setCode] = useState('');
 	const [outputCode, setOutputCode] = useState<any>('');
-	
+
 	useEffect(() => {
-		utils.initializeEsbuild();
-	}, []);
-
-	const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		if (!code) return;
-
-		utils.transformCode(code, setOutputCode);
-		setCode('');
+		const timer = setTimeout(() => {
+			utils.transformCode(code, setOutputCode);
+		}, 1000);
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [code]);
+	const onCodeChange = (value: string) => {
+		setCode(value);
 	};
-	
+
 	return (
-		<Container className='CodeCell'>
-			<header>
-				<h1>Display your code</h1>
-			</header>
-			<form onSubmit={onSubmitHandler}>
-				<CodeEditor onCodeChange={(value: string) => setCode(value)} initialValue="const a = 1;" />
-				<Button type='submit' color='primary' variant='outlined'>
-					Submit
-				</Button>
-			</form>
-			
-			<div className='code-output'>
-				<pre>{!outputCode ? 'No code output...' : outputCode}</pre>
-				<Preview code={outputCode} />
+		<Resizable direction='vertical'>
+			<div className='code-cell'>
+				<Resizable classes='code-cell__item' direction='horizontal'>
+					<CodeEditor onCodeChange={onCodeChange} initialValue='const a = 1;' />
+				</Resizable>
+
+				<div className='code-output code-cell__item preview-wrapper'>
+					<pre style={{ margin: '0' }}>{outputCode && outputCode}</pre>
+					<Preview code={outputCode} />
+				</div>
 			</div>
-		</Container>
+		</Resizable>
 	);
 };
 
