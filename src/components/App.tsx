@@ -1,18 +1,14 @@
-import React from 'react'
+import React from 'react';
 import CodeCell from './CodeCell';
+import { initializeEsbuild } from '../utils';
 
-interface Props {
-	
-}
-
-const App = (props: Props) => {
+const App = () => {
+	initializeEsbuild();
 	return (
 		<div>
 			<CodeCell />
-		
-			<CodeCell />
 		</div>
-	)
-}
+	);
+};
 
-export default App
+export default App;

@@ -1,7 +1,8 @@
-import React, {useRef, useEffect} from 'react'
+import React, { useRef, useEffect } from 'react';
+import './Preview.css';
 
 interface Props {
-        code: string;
+	code: string;
 }
 
 const html = `
@@ -27,26 +28,26 @@ const html = `
 		</html>
 	`;
 
-const Preview: React.FC<Props> = ({code}) => {
-    const iframeRef = useRef<any>()
-    useEffect(() => {
-        iframeRef.current.contentWindow.postMessage(
-			code,
-			'*'
-		);
-    }, [code])
-    return (
-        <iframe style={{
-						width: code ? '100%' : '0',
-						display: code ? 'block' : 'none',
-					}}
-					ref={iframeRef}
-					title='sandbox'
-					srcDoc={html}
-					sandbox='allow-scripts'>
-            
-        </iframe>
-    )
-}
+const Preview: React.FC<Props> = ({ code }) => {
+	const iframeRef = useRef<any>();
+	useEffect(() => {
+		iframeRef.current.contentWindow.postMessage(code, '*');
+	}, [code]);
+	return (
+		<div className='preview-wrapper'>
+			<iframe
+				style={{
+					backgroundColor: '#fff',
+					width: code ? '100%' : '0',
+					display: code ? 'block' : 'none',
+				}}
+				ref={iframeRef}
+				title='sandbox'
+				srcDoc={html}
+				sandbox='allow-scripts'
+			></iframe>
+		</div>
+	);
+};
 
-export default Preview
+export default Preview;
