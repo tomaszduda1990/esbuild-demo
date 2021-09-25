@@ -5,9 +5,17 @@ import Resizable from './Resizable';
 import * as utils from '../utils';
 import './CodeCell.css';
 
+export interface CodeCellProperties {
+	code: string;
+	error: string;
+}
+
 const CodeCell = () => {
 	const [code, setCode] = useState('');
-	const [outputCode, setOutputCode] = useState<any>('');
+	const [outputCode, setOutputCode] = useState<CodeCellProperties>({
+		code: '',
+		error: '',
+	});
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -20,7 +28,6 @@ const CodeCell = () => {
 	const onCodeChange = (value: string) => {
 		setCode(value);
 	};
-
 	return (
 		<Resizable direction='vertical'>
 			<div className='code-cell'>
@@ -29,7 +36,9 @@ const CodeCell = () => {
 				</Resizable>
 
 				<div className='code-output code-cell__item preview-wrapper'>
-					<pre style={{ margin: '0' }}>{outputCode && outputCode}</pre>
+					<pre style={{ margin: '0' }}>
+						{outputCode.code && outputCode.code}
+					</pre>
 					<Preview code={outputCode} />
 				</div>
 			</div>

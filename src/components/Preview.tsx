@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import './Preview.css';
+import { CodeCellProperties } from './CodeCell';
 
 interface Props {
-	code: string;
+	code: CodeCellProperties;
 }
 
 const html = `
@@ -11,16 +12,29 @@ const html = `
 			<body>
 				<div id="root"></div>
 				<script>
-					window.addEventListener('message', (e) => {
-						try{
-							eval(e.data)
-						}catch(error) {
-							const errorMessage = document.createElement('p');
-							errorMessage.textContent = error.message;
+					const handleError = (err) => {
+						const errorMessage = document.createElement('p');
+							errorMessage.classList.add('error-message')
+							errorMessage.textContent = err.message;
 							errorMessage.style.color = "red";
 							document.body.appendChild(errorMessage)
-							console.error(error)
-							throw error;
+							throw err;
+					}
+					window.addEventListener('error', (e) => {
+						handleError(e.error)
+					})
+					window.addEventListener('message', (e) => {
+						try{
+							const errorMessage = document.querySelectorAll('.error-message')
+							if(errorMessage) {
+								errorMessage.forEach((err) => {
+									document.body.removeChild(err);
+								})
+							}
+							if(e.data.error) throw new Error(e.data.error)
+							eval(e.data.code)
+						}catch(error) {
+							handleError(error)
 						}
 					}, false)
 				</script>
