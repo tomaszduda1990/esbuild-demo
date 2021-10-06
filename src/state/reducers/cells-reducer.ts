@@ -24,14 +24,17 @@ const cellsSlice = createSlice({
 	initialState,
 	reducers: {
 		moveCell: (
-			state,
+			state: CellsState,
 			{ payload }: PayloadAction<actionTypes.MoveCellAction>
 		) => {
 			const { direction, id } = payload;
 			const moveItemIndex = state.order.findIndex((item) => item === id);
 
 			// check if element is on 0 or last index then return
-			if (moveItemIndex === 0 || moveItemIndex === state.order.length - 1) {
+			if (
+				(moveItemIndex === 0 && direction === 'up') ||
+				(moveItemIndex === state.order.length - 1 && direction === 'down')
+			) {
 				return state;
 			} else {
 				// setup new index and manipulate state
@@ -39,38 +42,41 @@ const cellsSlice = createSlice({
 					direction === 'up' ? moveItemIndex - 1 : moveItemIndex + 1;
 				state.order[moveItemIndex] = state.order[newIndex];
 				state.order[newIndex] = id;
+				console.log(state);
 			}
 		},
 		deleteCell: (
-			state,
+			state: CellsState,
 			action: PayloadAction<actionTypes.DeleteCellAction>
 		) => {
 			const { id } = action.payload;
 			state.order = state.order.filter((item) => item !== id);
 			delete state.data[id];
+			console.log(state);
 		},
 		insertCellBefore: (
-			state,
-			{ payload }: PayloadAction<actionTypes.InsertBeforeCellActon>
+			state: CellsState,
+			action: PayloadAction<actionTypes.InsertBeforeCellActon>
 		) => {
 			const cellId = uuidv4();
 			const cell: Cell = {
 				id: cellId,
 				content: '',
-				type: payload.type,
+				type: action.payload.type,
 			};
-			if (!payload.id) {
+			if (!action.payload.id) {
 				state.order.push(cellId);
 			} else {
 				const indexOfItem = state.order.findIndex(
-					(item) => item === payload.id
+					(item) => item === action.payload.id
 				);
 				state.order.splice(indexOfItem, 0, cellId);
 			}
 			state.data[cellId] = cell;
+			console.log(state);
 		},
 		updateCell: (
-			state,
+			state: CellsState,
 			action: PayloadAction<actionTypes.UpdateCellAction>
 		) => {
 			const { id, content } = action.payload;

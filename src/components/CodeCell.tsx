@@ -6,7 +6,7 @@ import * as utils from '../utils';
 import './CodeCell.css';
 import { Cell } from '../state/cell';
 import { useDispatch } from 'react-redux';
-import { deleteCell, insertCellBefore, updateCell, moveCell }from '../state/index'
+import { updateCell } from '../state/index';
 
 export interface CodeCellProperties {
 	code: string;
@@ -18,7 +18,7 @@ interface CodeCellProps {
 }
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	const [outputCode, setOutputCode] = useState<CodeCellProperties>({
 		code: '',
 		error: '',
@@ -33,10 +33,12 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 		};
 	}, [cell.content]);
 	const onCodeChange = (value: string) => {
-		dispatch(updateCell({
-			id: cell.id,
-			content: value
-		}));
+		dispatch(
+			updateCell({
+				id: cell.id,
+				content: value,
+			})
+		);
 	};
 	return (
 		<Resizable direction='vertical'>

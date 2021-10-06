@@ -1,22 +1,23 @@
-import React from 'react'
+import React from 'react';
 import CodeCell from './CodeCell';
+import ActionBar from './ActionBar';
 import TextEditor from './TextEditor';
-import { useDispatch } from 'react-redux';
 import { Cell } from '../state/cell';
 interface CellListItemProps {
-    cell: Cell;
+	cell: Cell;
 }
 
 const CellListItem: React.FC<CellListItemProps> = ({ cell }) => {
-    const dispatch = useDispatch();
-    // dispatch(updateCell({
-    //     id:
-    // }))
-    return (
-        <div>
-            { cell.type  === 'code' ? <CodeCell cell={cell} /> : <TextEditor cell={cell} /> }
-        </div>
-    )
-}
+	return (
+		<div style={{ margin: '100px 0' }}>
+			<ActionBar cellId={cell.id} />
+			{cell.type === 'code' ? (
+				<CodeCell cell={cell} />
+			) : (
+				<TextEditor cell={cell} />
+			)}
+		</div>
+	);
+};
 
-export default CellListItem
+export default CellListItem;

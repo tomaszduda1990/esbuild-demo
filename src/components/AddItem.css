@@ -1,0 +1,21 @@
+.add-item::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 0;
+	height: 1px;
+	background-color: #000;
+	width: 100%;
+	z-index: -1;
+}
+
+.add-item {
+	position: relative;
+	text-align: center;
+}
+
+.add-item button {
+	z-index: 100;
+	margin: 40px;
+}

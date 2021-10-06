@@ -31,16 +31,20 @@ const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
 			document.body.removeEventListener('click', listener, { capture: true });
 		};
 	}, []);
-	
+
 	if (editing) {
 		return (
 			<div className='text-editor' ref={ref}>
 				<MDEditor
 					value={cell.content}
-					onChange={(value: string = '') => dispatch(updateCell({
-						id: cell.id,
-						content: value
-					}))}
+					onChange={(value: string = '') =>
+						dispatch(
+							updateCell({
+								id: cell.id,
+								content: value,
+							})
+						)
+					}
 				></MDEditor>
 			</div>
 		);
@@ -51,7 +55,11 @@ const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
 			id='markdownEditorContainer'
 			onClick={() => setEditing(true)}
 		>
-			<MDEditor.Markdown source={cell.content.length ? cell.content : "Please click to edit markdown"}></MDEditor.Markdown>
+			<MDEditor.Markdown
+				source={
+					cell.content.length ? cell.content : 'Please click to edit markdown'
+				}
+			></MDEditor.Markdown>
 		</div>
 	);
 };
