@@ -42,7 +42,6 @@ const cellsSlice = createSlice({
 					direction === 'up' ? moveItemIndex - 1 : moveItemIndex + 1;
 				state.order[moveItemIndex] = state.order[newIndex];
 				state.order[newIndex] = id;
-				console.log(state);
 			}
 		},
 		deleteCell: (
@@ -52,7 +51,6 @@ const cellsSlice = createSlice({
 			const { id } = action.payload;
 			state.order = state.order.filter((item) => item !== id);
 			delete state.data[id];
-			console.log(state);
 		},
 		insertCellBefore: (
 			state: CellsState,
@@ -73,7 +71,6 @@ const cellsSlice = createSlice({
 				state.order.splice(indexOfItem, 0, cellId);
 			}
 			state.data[cellId] = cell;
-			console.log(state);
 		},
 		updateCell: (
 			state: CellsState,

@@ -18,10 +18,7 @@ export const initializeEsbuild = async () => {
 		});
 	}
 };
-export const transformCode = async (
-	code: string,
-	cb: (arg: EsbuildReturnData) => void
-) => {
+export const transformCode = async (code: string) => {
 	try {
 		const transformed = await esbuild.build({
 			entryPoints: ['index.js'],
@@ -33,13 +30,13 @@ export const transformCode = async (
 			},
 			plugins: [unpkgPathPlugin(), fetchPlugin(code)],
 		});
-		cb({
+		return {
 			code: transformed.outputFiles[0].text,
 			error: '',
-		});
+		};
 	} catch (err) {
 		if (err instanceof Error) {
-			cb({ code: '', error: err.message });
+			return { code: '', error: err.message };
 		}
 	}
 };
