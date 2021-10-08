@@ -7,6 +7,8 @@ import './CodeCell.css';
 import { Cell } from '../state/cell';
 import { useDispatch } from 'react-redux';
 import { updateCell } from '../state/index';
+import { createBundle } from '../state/reducers/bundles';
+import { useTypedSelector } from '../hooks/used-type-selector';
 
 export interface CodeCellProperties {
 	code: string;
@@ -18,6 +20,8 @@ interface CodeCellProps {
 }
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
+	const cellBundle = useTypedSelector((state) => state.bundles[cell.id]);
+	console.log(cellBundle);
 	const dispatch = useDispatch();
 	const [outputCode, setOutputCode] = useState<CodeCellProperties>({
 		code: '',
@@ -26,12 +30,13 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			utils.transformCode(cell.content, setOutputCode);
+			console.log('trying to do create bundle');
+			createBundle(cell.id, cell.content);
 		}, 1000);
 		return () => {
 			clearTimeout(timer);
 		};
-	}, [cell.content]);
+	}, [cell.content, cell.id]);
 	const onCodeChange = (value: string) => {
 		dispatch(
 			updateCell({
